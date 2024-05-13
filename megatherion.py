@@ -218,7 +218,14 @@ class DataFrame:
         Appends new row to dataframe.
         :param row: tuple of values for all columns
         """
-        ...
+        if len(row) != len(self._columns): # Checking for same lenght of row and number of columns
+            # raising exception if lenght of row is not same as number of columns
+            raise ValueError(f"Lenght of append data isn`t matching number of collumns -> {len(self._columns)}")
+        i:int = 0 # indexer for row !possible tuning!
+        for col_name in self.columns:
+            self._columns[col_name].append(row[i]) # appending new values
+            i += 1
+        self._size += 1 # after finaliying of append we have increase size
 
     def filter(self, col_name:str,
                predicate: Callable[[Union[float, str]], bool]) -> 'DataFrame':
@@ -324,18 +331,23 @@ class CSVReader(Reader):
 
 
 if __name__ == "__main__":
-    df = DataFrame(dict(
+    df = DataFrame(
+        dict(
         a=Column([None, 3.1415], Type.Float),
         b=Column(["a", 2], Type.String),
         c=Column(range(2), Type.Float)
-        ))
+        )
+        )
     df.setvalue("a", 1, 42)
     print(df)
 
-    df = DataFrame.read_json("data.json")
+    #df = DataFrame.read_json("data.json")
+    #print(df)
+    alfa = (10,20)
+    df.append_row(alfa)
     print(df)
 
-for line in df:
-    print(line)
+#for line in df:
+#    print(line)
 
 ###
