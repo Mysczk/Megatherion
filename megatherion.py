@@ -131,7 +131,16 @@ class Column(MutableSequence):# implement MutableSequence (some method are mixed
         """
         # FIXME: value is cast to the same type (minor optimisation problem)
         return Column(self._data, self.dtype)
-
+    
+    def is_float(self) -> bool:
+        """
+        returns True if its float
+        """
+        if self.dtype == Type.Float:
+            return True
+        return False
+    def get_data(self):
+        return self._data.copy()
     def get_formatted_item(self, index: int, *, width: int):
         """
         Auxiliary method for formating column items to string with `width`
@@ -248,6 +257,24 @@ class DataFrame:
         """
         ...
 
+    def avg(self, col_name):
+        """
+        returns average value in column if Type is string
+        """
+        
+        if col_name not in self._columns:
+            raise NameError(f"column {col_name} is not in Dataframe")
+        
+        if self._columns[col_name].is_float():
+            data_pointer = self._columns[col_name].get_data()
+            for i in range(self._size):
+                if data_pointer[i] == None:
+                    data_pointer[i] = 0.0
+            ravg = sum(data_pointer) / len(self._columns[col_name])
+            return ravg
+        else:
+            raise TypeError(f"Collumn {col_name} is not float type")
+        
     def describe(self) -> str:
         """
         similar to pandas but only with min, max and avg statistics for floats and count"
@@ -344,8 +371,9 @@ if __name__ == "__main__":
     #df = DataFrame.read_json("data.json")
     #print(df)
     alfa = (10,20)
-    df.append_row(alfa)
-    print(df)
+    #df.append_row(alfa)
+    
+    print(df.avg("g"))
 
 #for line in df:
 #    print(line)
