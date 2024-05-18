@@ -139,8 +139,10 @@ class Column(MutableSequence):# implement MutableSequence (some method are mixed
         if self.dtype == Type.Float:
             return True
         return False
+    
     def get_data(self):
-        return self._data.copy()
+        return self.copy()
+
     def get_formatted_item(self, index: int, *, width: int):
         """
         Auxiliary method for formating column items to string with `width`
@@ -255,16 +257,23 @@ class DataFrame:
         :param ascending: direction of sorting
         :return: new dataframe
         """
-        ...
+        if col_name not in self._columns:
+            raise NameError(f"column {col_name} is not in Dataframe")
+        
+        if ascending:
+            ...
+        else:
+            ...
+
 
     def avg(self, col_name):
         """
         returns average value in column if Type is string
         """
-        
+        # checking for existence of column
         if col_name not in self._columns:
             raise NameError(f"column {col_name} is not in Dataframe")
-        
+        # if column is type float calculate average value
         if self._columns[col_name].is_float():
             data_pointer = self._columns[col_name].get_data()
             for i in range(self._size):
@@ -273,8 +282,29 @@ class DataFrame:
             ravg = sum(data_pointer) / len(self._columns[col_name])
             return ravg
         else:
-            raise TypeError(f"Collumn {col_name} is not float type")
+            raise TypeError(f"Collumn {col_name} is not float type") # exception in case column is nto float
+    
+    def max(self, col_name):
+        """
+        returns maximal value in column
+        """
+        if col_name not in self._columns:
+            raise NameError(f"column {col_name} is not in Dataframe")   
         
+        data_pointer = [x for x in self._columns[col_name].get_data() if x is not None] # deleting None values
+        rmax = max(data_pointer)
+        return rmax
+    def min(self, col_name):
+        """
+        returns maximal value in column
+        """
+        if col_name not in self._columns:
+            raise NameError(f"column {col_name} is not in Dataframe")   
+        
+        data_pointer = [x for x in self._columns[col_name].get_data() if x is not None] # deleting None values
+        rmin = min(data_pointer)
+        return rmin
+    
     def describe(self) -> str:
         """
         similar to pandas but only with min, max and avg statistics for floats and count"
@@ -373,8 +403,15 @@ if __name__ == "__main__":
     alfa = (10,20)
     #df.append_row(alfa)
     
-    print(df.avg("g"))
-
+    #print(df.avg("g"))
+    print(df.max("a"))
+    print(df.max("b"))
+    print(df.max("c"))
+    print(df.min("a"))
+    print(df.min("b"))
+    print(df.min("c"))
+    print()
+    print(df)
 #for line in df:
 #    print(line)
 
