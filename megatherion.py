@@ -122,7 +122,9 @@ class Column(MutableSequence):# implement MutableSequence (some method are mixed
         :return: new column
         """
         assert len(indices) == len(self)
-        ...
+        new_data = [self._data[i] for i in indices] # using comprehension for reindexing column by pater (indice)
+
+        return Column(new_data, self.dtype)
 
     def copy(self) -> 'Column':
         """
@@ -260,11 +262,13 @@ class DataFrame:
         if col_name not in self._columns:
             raise NameError(f"column {col_name} is not in Dataframe")
         
-        if ascending:
-            ...
-        else:
-            ...
-
+        sorted_indices = sorted(
+        range(len(self)),
+        key=lambda i: (self._columns[col_name][i] is None, self._columns[col_name][i]),
+        reverse=not ascending
+        )
+        sorted_columns = {name: self._columns[name].permute(sorted_indices) for name in self.columns}
+        return DataFrame(sorted_columns)
 
     def avg(self, col_name):
         """
@@ -294,6 +298,7 @@ class DataFrame:
         data_pointer = [x for x in self._columns[col_name].get_data() if x is not None] # deleting None values
         rmax = max(data_pointer)
         return rmax
+    
     def min(self, col_name):
         """
         returns maximal value in column
@@ -396,22 +401,19 @@ if __name__ == "__main__":
         )
         )
     df.setvalue("a", 1, 42)
-    print(df)
+    #print(df)
 
     #df = DataFrame.read_json("data.json")
     #print(df)
     alfa = (10,20)
     #df.append_row(alfa)
+    for i in range(1, 11):
+        df.append_row((i,i+i,i*i))
+    #print(df)
     
-    #print(df.avg("g"))
-    print(df.max("a"))
-    print(df.max("b"))
-    print(df.max("c"))
-    print(df.min("a"))
-    print(df.min("b"))
-    print(df.min("c"))
+    
     print()
-    print(df)
+    print(df.sort("c"))
 #for line in df:
 #    print(line)
 
