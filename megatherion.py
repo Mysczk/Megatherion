@@ -315,7 +315,19 @@ class DataFrame:
         similar to pandas but only with min, max and avg statistics for floats and count"
         :return: string with formatted decription
         """
-        ...
+        lines = [] # list for lines
+        for col_name in self.columns:
+            col = self._columns[col_name]
+            if self._columns[col_name].is_float(): # statistics for float column
+                col_min = self.min(col_name)
+                col_max = self.max(col_name)
+                col_avg = self.avg(col_name)
+                ncount = len([v for v in col if v is not None]) # gets count of not None values
+                lines.append(f"{col_name:12s} min: {col_min:.2f} max: {col_max:.2f} avg: {col_avg:.2f} count: {ncount}")
+            else: # statistics for string column
+                ncount = len([v for v in col if v is not None]) # gets count of not None values
+                lines.append(f"{col_name:12s} count: {ncount}")
+        return "\n".join(lines)
 
     def inner_join(self, other: 'DataFrame', self_key_column: str,
                    other_key_column: str) -> 'DataFrame':
@@ -410,10 +422,9 @@ if __name__ == "__main__":
     for i in range(1, 11):
         df.append_row((i,i+i,i*i))
     #print(df)
-    
-    
+    print(df)
     print()
-    print(df.sort("c"))
+    print(df.describe())
 #for line in df:
 #    print(line)
 
