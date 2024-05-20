@@ -183,7 +183,11 @@ class DataFrame:
         :param index: index of row
         :return: tuple of items in row
         """
-        ...
+        assert index >= 0 and index <= self._size
+        rlist = []
+        for col_name in self._columns:
+            rlist.append(self._columns[col_name][index])
+        return tuple(rlist)
 
     def __iter__(self) -> Iterator[Tuple[Union[str, float]]]:
         """
@@ -424,7 +428,7 @@ if __name__ == "__main__":
     #print(df)
     print(df)
     print()
-    print(df.describe())
+    print(df[1])
 #for line in df:
 #    print(line)
 
