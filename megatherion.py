@@ -184,7 +184,7 @@ class DataFrame:
         :param index: index of row
         :return: tuple of items in row
         """
-        assert index >= self._size and index <= self._size
+        assert index >= -self._size and index <= self._size
         rlist = []
         for col_name in self._columns:
             rlist.append(self._columns[col_name][index])
@@ -312,6 +312,22 @@ class DataFrame:
             return ravg
         else:
             raise TypeError(f"Collumn {col_name} is not float type") # exception in case column is nto float
+    
+    def head(self, lines) -> 'DataFrame':
+        """
+        returns first n lines of Dataframe
+        """
+        indices = list(range(lines))
+        new_lines = {name: self._columns[name].permute(indices) for name in self.columns}
+        return DataFrame(new_lines)
+
+    def tail(self, lines) -> 'DataFrame':
+        """
+        returns last n lines of Dataframe
+        """
+        indices = list(range(self._size-1, self._size-lines-1, -1))
+        new_lines = {name: self._columns[name].permute(reversed(indices)) for name in self.columns}
+        return DataFrame(new_lines)
     
     def max(self, col_name):
         """
@@ -446,9 +462,8 @@ if __name__ == "__main__":
     #df.append_row(alfa)
     for i in range(1, 11):
         df.append_row((i,i+i,i*i))
-        df.append_row((1,i,i))
-    #print(df)
-    print(df.sample(3))
+    print(df)
+    print(df.tail(3))
     #print(df.describe())
     #nd = df.unique("a")
     #print(nd.sort("a"))
