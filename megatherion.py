@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Dict, Iterable, Iterator, Tuple, Union, Any, List, Callable
 from enum import Enum
 from collections.abc import MutableSequence
+from random import randint
 
 
 class Type(Enum):
@@ -183,7 +184,7 @@ class DataFrame:
         :param index: index of row
         :return: tuple of items in row
         """
-        assert index >= 0 and index <= self._size
+        assert index >= self._size and index <= self._size
         rlist = []
         for col_name in self._columns:
             rlist.append(self._columns[col_name][index])
@@ -259,18 +260,22 @@ class DataFrame:
     def unique(self, col_name) -> 'DataFrame':
         if col_name not in self._columns:
             raise NameError(f"column {col_name} is not in Dataframe")
-        unique_val = set()
+        unique_val = set() # assures unique elements
         indices = []
 
-        for i, val in enumerate(self._columns[col_name]):
+        for i, val in enumerate(self._columns[col_name]): # enumerate returns index and value from iterator
             if val not in unique_val:
                 unique_val.add(val)
                 indices.append(i)
-        new_cols = {column: self._columns[column].permute(indices) for column in self.columns}
-        return DataFrame(new_cols)
+        new_columns = {name: self._columns[name].permute(indices) for name in self.columns}
+        return DataFrame(new_columns)
 
-    def sample():
-        ...
+    def sample(self, lines:int) -> 'DataFrame':
+        assert lines > 0, f"Unable to create DataFrame with ) or less lines"
+
+        indices = [randint(0,self._size-1) for _ in range(lines)]
+        new_columns = {name: self._columns[name].permute(indices) for name in self.columns}
+        return DataFrame(new_columns)
 
     def sort(self, col_name:str, ascending=True) -> 'DataFrame':
         """
@@ -443,9 +448,8 @@ if __name__ == "__main__":
         df.append_row((i,i+i,i*i))
         df.append_row((1,i,i))
     #print(df)
-    print(df)
-    print()
+    print(df.sample(3))
     #print(df.describe())
-    nd = df.unique("a")
-    print(nd.sort("a"))
+    #nd = df.unique("a")
+    #print(nd.sort("a"))
 ###
