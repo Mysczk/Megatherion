@@ -271,7 +271,7 @@ class DataFrame:
         return DataFrame(new_columns)
 
     def sample(self, lines:int) -> 'DataFrame':
-        assert lines > 0, f"Unable to create DataFrame with ) or less lines"
+        assert lines > 0, f"Unable to create DataFrame with 0 or less lines"
 
         indices = [randint(0,self._size-1) for _ in range(lines)]
         new_columns = {name: self._columns[name].permute(indices) for name in self.columns}
@@ -444,7 +444,6 @@ class CSVReader(Reader):
     def read(self) -> 'DataFrame':
         ...
 
-
 if __name__ == "__main__":
     df = DataFrame(
         dict(
@@ -454,17 +453,31 @@ if __name__ == "__main__":
         )
         )
     df.setvalue("a", 1, 42)
+    print(df)
     #print(df)
-
     #df = DataFrame.read_json("data.json")
     #print(df)
-    alfa = (10,20)
-    #df.append_row(alfa)
-    for i in range(1, 11):
-        df.append_row((i,i+i,i*i))
-    print(df)
-    print(df.tail(3))
-    #print(df.describe())
-    #nd = df.unique("a")
-    #print(nd.sort("a"))
+    alfa = (10,"20",30)
+    df.append_row(alfa)
+    #print(df)
+
+    # description of dataframe
+    print(df.describe())
+
+    # unique
+    df.append_row((1,"a", 30))
+    
+    nd = df.unique("a")
+    
+    #sort
+    print(nd.sort("a"))
+
+    print()
+    # sample
+    a = df.sample(3)
+    print(a)
+
+    print(df.head(1))
+    print()
+    print(df.tail(1))
 ###
